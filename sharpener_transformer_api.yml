@@ -1,7 +1,10 @@
 swagger: '2.0'
 info:
-  title: Transformer wrapper API for gene shapener 
-  version: 1.0.0
+  title: API for an expander based on DepMap gene-knockdown correlations
+  version: 1.0.0.0
+  description: Gene-list expander based on DepMap gene-knockdown correlations
+host: indigo.ncats.io
+basePath: /depmap_expander
 
 paths:
   /transformer_info:
