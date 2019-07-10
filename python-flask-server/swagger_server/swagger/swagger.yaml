@@ -1,0 +1,136 @@
+---
+swagger: "2.0"
+info:
+  description: "Gene-list expander based on DepMap gene-knockdown correlations"
+  version: "1.0.0.0"
+  title: "API for an expander based on DepMap gene-knockdown correlations"
+host: "indigo.ncats.io"
+basePath: "/depmap_expander"
+paths:
+  /transformer_info:
+    get:
+      operationId: "transformer_info_get"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/transformer_info"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /transform:
+    post:
+      operationId: "transform_post"
+      parameters:
+      - in: "body"
+        name: "query"
+        description: "transformer query"
+        required: true
+        schema:
+          $ref: "#/definitions/transformer_query"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/gene_info"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+definitions:
+  transformer_query:
+    type: "object"
+    properties:
+      genes:
+        type: "array"
+        items:
+          $ref: "#/definitions/gene_info"
+      controls:
+        type: "array"
+        items:
+          $ref: "#/definitions/property"
+  gene_info:
+    type: "object"
+    required:
+    - "gene_id"
+    properties:
+      gene_id:
+        type: "string"
+      attributes:
+        type: "array"
+        items:
+          $ref: "#/definitions/attribute"
+    example:
+      attributes:
+      - name: "name"
+        source: "source"
+        value: "value"
+      - name: "name"
+        source: "source"
+        value: "value"
+      gene_id: "gene_id"
+  attribute:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      value:
+        type: "string"
+      source:
+        type: "string"
+    example:
+      name: "name"
+      source: "source"
+      value: "value"
+  property:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      value:
+        type: "string"
+  transformer_info:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      function:
+        type: "string"
+      parameters:
+        type: "array"
+        items:
+          $ref: "#/definitions/parameter"
+    example:
+      function: "function"
+      name: "name"
+      parameters:
+      - allowed_values:
+        - "allowed_values"
+        - "allowed_values"
+        default: "default"
+        name: "name"
+        type: "type"
+      - allowed_values:
+        - "allowed_values"
+        - "allowed_values"
+        default: "default"
+        name: "name"
+        type: "type"
+  parameter:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      type:
+        type: "string"
+      default:
+        type: "string"
+      allowed_values:
+        type: "array"
+        items:
+          type: "string"
+    example:
+      allowed_values:
+      - "allowed_values"
+      - "allowed_values"
+      default: "default"
+      name: "name"
+      type: "type"
