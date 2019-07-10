@@ -7,6 +7,7 @@ from swagger_server.models.transformer_query import TransformerQuery  # noqa: E5
 from swagger_server import util
 
 from swagger_server.expander.depmap import expander_info
+from swagger_server.expander.depmap import expand
 
 def transform_post(query):  # noqa: E501
     """transform_post
@@ -20,7 +21,7 @@ def transform_post(query):  # noqa: E501
     """
     if connexion.request.is_json:
         query = TransformerQuery.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    return expand(query)
 
 
 def transformer_info_get():  # noqa: E501
