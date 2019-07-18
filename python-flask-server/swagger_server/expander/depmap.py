@@ -39,7 +39,10 @@ def expand(query: TransformerQuery):
     try:
         threshold = float(controls['correlation threshold'])
         if controls['correlated values'] == 'gene knockout':
-            genes = {gene.gene_id:gene for gene in query.genes}
+            genes = {}
+            for gene in query.genes:
+                gene_id = 'NCBIGene:'+entrez_gene_id(gene) if entrez_gene_id(gene) != None else gene.gene_id
+                genes[gene_id] = gene
             for gene in query.genes:
                 genes = expand_gene_knockout(gene, threshold, genes)
             return list(genes.values())
