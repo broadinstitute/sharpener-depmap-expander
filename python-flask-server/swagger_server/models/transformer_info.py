@@ -16,31 +16,41 @@ class TransformerInfo(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, name: str=None, function: str=None, parameters: List[Parameter]=None):  # noqa: E501
+    def __init__(self, name: str=None, function: str=None, description: str=None, parameters: List[Parameter]=None, required_attributes: List[str]=None):  # noqa: E501
         """TransformerInfo - a model defined in Swagger
 
         :param name: The name of this TransformerInfo.  # noqa: E501
         :type name: str
         :param function: The function of this TransformerInfo.  # noqa: E501
         :type function: str
+        :param description: The description of this TransformerInfo.  # noqa: E501
+        :type description: str
         :param parameters: The parameters of this TransformerInfo.  # noqa: E501
         :type parameters: List[Parameter]
+        :param required_attributes: The required_attributes of this TransformerInfo.  # noqa: E501
+        :type required_attributes: List[str]
         """
         self.swagger_types = {
             'name': str,
             'function': str,
-            'parameters': List[Parameter]
+            'description': str,
+            'parameters': List[Parameter],
+            'required_attributes': List[str]
         }
 
         self.attribute_map = {
             'name': 'name',
             'function': 'function',
-            'parameters': 'parameters'
+            'description': 'description',
+            'parameters': 'parameters',
+            'required_attributes': 'required_attributes'
         }
 
         self._name = name
         self._function = function
+        self._description = description
         self._parameters = parameters
+        self._required_attributes = required_attributes
 
     @classmethod
     def from_dict(cls, dikt) -> 'TransformerInfo':
@@ -57,6 +67,7 @@ class TransformerInfo(Model):
     def name(self) -> str:
         """Gets the name of this TransformerInfo.
 
+        Name of the transformer.  # noqa: E501
 
         :return: The name of this TransformerInfo.
         :rtype: str
@@ -67,10 +78,13 @@ class TransformerInfo(Model):
     def name(self, name: str):
         """Sets the name of this TransformerInfo.
 
+        Name of the transformer.  # noqa: E501
 
         :param name: The name of this TransformerInfo.
         :type name: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
 
@@ -78,6 +92,7 @@ class TransformerInfo(Model):
     def function(self) -> str:
         """Gets the function of this TransformerInfo.
 
+        Function of the transformer, one of 'producer', 'expander', 'filter'.  # noqa: E501
 
         :return: The function of this TransformerInfo.
         :rtype: str
@@ -88,17 +103,50 @@ class TransformerInfo(Model):
     def function(self, function: str):
         """Sets the function of this TransformerInfo.
 
+        Function of the transformer, one of 'producer', 'expander', 'filter'.  # noqa: E501
 
         :param function: The function of this TransformerInfo.
         :type function: str
         """
+        allowed_values = ["producer", "expander", "filter"]  # noqa: E501
+        if function not in allowed_values:
+            raise ValueError(
+                "Invalid value for `function` ({0}), must be one of {1}"
+                .format(function, allowed_values)
+            )
 
         self._function = function
+
+    @property
+    def description(self) -> str:
+        """Gets the description of this TransformerInfo.
+
+        Description of the transformer.  # noqa: E501
+
+        :return: The description of this TransformerInfo.
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: str):
+        """Sets the description of this TransformerInfo.
+
+        Description of the transformer.  # noqa: E501
+
+        :param description: The description of this TransformerInfo.
+        :type description: str
+        """
+        if description is None:
+            raise ValueError("Invalid value for `description`, must not be `None`")  # noqa: E501
+
+        self._description = description
 
     @property
     def parameters(self) -> List[Parameter]:
         """Gets the parameters of this TransformerInfo.
 
+        Parameters used to control the transformer.  # noqa: E501
 
         :return: The parameters of this TransformerInfo.
         :rtype: List[Parameter]
@@ -109,9 +157,37 @@ class TransformerInfo(Model):
     def parameters(self, parameters: List[Parameter]):
         """Sets the parameters of this TransformerInfo.
 
+        Parameters used to control the transformer.  # noqa: E501
 
         :param parameters: The parameters of this TransformerInfo.
         :type parameters: List[Parameter]
         """
+        if parameters is None:
+            raise ValueError("Invalid value for `parameters`, must not be `None`")  # noqa: E501
 
         self._parameters = parameters
+
+    @property
+    def required_attributes(self) -> List[str]:
+        """Gets the required_attributes of this TransformerInfo.
+
+        Gene attributes required by the transformer  # noqa: E501
+
+        :return: The required_attributes of this TransformerInfo.
+        :rtype: List[str]
+        """
+        return self._required_attributes
+
+    @required_attributes.setter
+    def required_attributes(self, required_attributes: List[str]):
+        """Sets the required_attributes of this TransformerInfo.
+
+        Gene attributes required by the transformer  # noqa: E501
+
+        :param required_attributes: The required_attributes of this TransformerInfo.
+        :type required_attributes: List[str]
+        """
+        if required_attributes is None:
+            raise ValueError("Invalid value for `required_attributes`, must not be `None`")  # noqa: E501
+
+        self._required_attributes = required_attributes

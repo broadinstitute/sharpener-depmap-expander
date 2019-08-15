@@ -12,7 +12,7 @@ def transform_post(query):  # noqa: E501
 
      # noqa: E501
 
-    :param query: transformer query
+    :param query: Performs transformer query.
     :type query: dict | bytes
 
     :rtype: List[GeneInfo]
@@ -23,9 +23,9 @@ def transform_post(query):  # noqa: E501
 
 
 def transformer_info_get():  # noqa: E501
-    """transformer_info_get
+    """Retrieve transformer info
 
-     # noqa: E501
+    Provides information about the transformer. # noqa: E501
 
 
     :rtype: TransformerInfo

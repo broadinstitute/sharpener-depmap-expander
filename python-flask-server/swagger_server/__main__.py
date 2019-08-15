@@ -8,7 +8,7 @@ from swagger_server import encoder
 def main():
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
-    app.add_api('swagger.yaml', arguments={'title': 'API for an expander based on DepMap gene-knockdown correlations'})
+    app.add_api('swagger.yaml', arguments={'title': 'DepMap correlation expander'})
     app.run(port=8080)
 
 

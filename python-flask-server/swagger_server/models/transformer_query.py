@@ -53,6 +53,7 @@ class TransformerQuery(Model):
     def genes(self) -> List[GeneInfo]:
         """Gets the genes of this TransformerQuery.
 
+        List of genes that will be transformed. Required for expanders and filters; should be omitted for producers.  # noqa: E501
 
         :return: The genes of this TransformerQuery.
         :rtype: List[GeneInfo]
@@ -63,6 +64,7 @@ class TransformerQuery(Model):
     def genes(self, genes: List[GeneInfo]):
         """Sets the genes of this TransformerQuery.
 
+        List of genes that will be transformed. Required for expanders and filters; should be omitted for producers.  # noqa: E501
 
         :param genes: The genes of this TransformerQuery.
         :type genes: List[GeneInfo]
@@ -74,6 +76,7 @@ class TransformerQuery(Model):
     def controls(self) -> List[ModelProperty]:
         """Gets the controls of this TransformerQuery.
 
+        Values that control the behavior of the transformer. Names of the controls must match the names specified in the transformer's definition and values must match types (and possibly  allowed_values) specified in the transformer's definition.  # noqa: E501
 
         :return: The controls of this TransformerQuery.
         :rtype: List[ModelProperty]
@@ -84,9 +87,12 @@ class TransformerQuery(Model):
     def controls(self, controls: List[ModelProperty]):
         """Sets the controls of this TransformerQuery.
 
+        Values that control the behavior of the transformer. Names of the controls must match the names specified in the transformer's definition and values must match types (and possibly  allowed_values) specified in the transformer's definition.  # noqa: E501
 
         :param controls: The controls of this TransformerQuery.
         :type controls: List[ModelProperty]
         """
+        if controls is None:
+            raise ValueError("Invalid value for `controls`, must not be `None`")  # noqa: E501
 
         self._controls = controls
