@@ -65,6 +65,8 @@ class ModelProperty(Model):
         :param name: The name of this ModelProperty.
         :type name: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
 
@@ -86,5 +88,7 @@ class ModelProperty(Model):
         :param value: The value of this ModelProperty.
         :type value: str
         """
+        if value is None:
+            raise ValueError("Invalid value for `value`, must not be `None`")  # noqa: E501
 
         self._value = value

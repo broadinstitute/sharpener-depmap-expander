@@ -61,6 +61,7 @@ class Parameter(Model):
     def name(self) -> str:
         """Gets the name of this Parameter.
 
+        Name of the parameter.  # noqa: E501
 
         :return: The name of this Parameter.
         :rtype: str
@@ -71,10 +72,13 @@ class Parameter(Model):
     def name(self, name: str):
         """Sets the name of this Parameter.
 
+        Name of the parameter.  # noqa: E501
 
         :param name: The name of this Parameter.
         :type name: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
         self._name = name
 
@@ -82,6 +86,7 @@ class Parameter(Model):
     def type(self) -> str:
         """Gets the type of this Parameter.
 
+        Type of the parameter, one of 'Boolean', 'int', 'double', 'string'.  # noqa: E501
 
         :return: The type of this Parameter.
         :rtype: str
@@ -92,10 +97,17 @@ class Parameter(Model):
     def type(self, type: str):
         """Sets the type of this Parameter.
 
+        Type of the parameter, one of 'Boolean', 'int', 'double', 'string'.  # noqa: E501
 
         :param type: The type of this Parameter.
         :type type: str
         """
+        allowed_values = ["Boolean", "int", "double", "string"]  # noqa: E501
+        if type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `type` ({0}), must be one of {1}"
+                .format(type, allowed_values)
+            )
 
         self._type = type
 
@@ -103,6 +115,7 @@ class Parameter(Model):
     def default(self) -> str:
         """Gets the default of this Parameter.
 
+        Default value of the parameter.  # noqa: E501
 
         :return: The default of this Parameter.
         :rtype: str
@@ -113,10 +126,13 @@ class Parameter(Model):
     def default(self, default: str):
         """Sets the default of this Parameter.
 
+        Default value of the parameter.  # noqa: E501
 
         :param default: The default of this Parameter.
         :type default: str
         """
+        if default is None:
+            raise ValueError("Invalid value for `default`, must not be `None`")  # noqa: E501
 
         self._default = default
 
@@ -124,6 +140,7 @@ class Parameter(Model):
     def allowed_values(self) -> List[str]:
         """Gets the allowed_values of this Parameter.
 
+        Allowed values for the parameter.  # noqa: E501
 
         :return: The allowed_values of this Parameter.
         :rtype: List[str]
@@ -134,6 +151,7 @@ class Parameter(Model):
     def allowed_values(self, allowed_values: List[str]):
         """Sets the allowed_values of this Parameter.
 
+        Allowed values for the parameter.  # noqa: E501
 
         :param allowed_values: The allowed_values of this Parameter.
         :type allowed_values: List[str]
