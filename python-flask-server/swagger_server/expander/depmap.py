@@ -3,6 +3,7 @@ from swagger_server.models.transformer_info import TransformerInfo
 from swagger_server.models.parameter import Parameter
 from swagger_server.models.transformer_query import TransformerQuery
 from swagger_server.models.gene_info import GeneInfo
+from swagger_server.models.gene_info import GeneInfoIdentifiers
 from swagger_server.models.attribute import Attribute
 
 import requests
@@ -15,6 +16,7 @@ def expander_info():
     return TransformerInfo(
         name = 'DepMap correlation expander',
         function = 'expander',
+        description = 'Gene-list expander based on DepMap gene-knockdown correlations.',
         parameters = [
             Parameter(
                 name = 'correlation threshold',
@@ -27,7 +29,8 @@ def expander_info():
                 default = 'gene knockout',
                 allowed_values = ['gene knockout']
             )
-        ]
+        ],
+        required_attributes = ['identifiers.entrez','gene_symbol']
     )
 
 
@@ -42,6 +45,13 @@ def expand(query: TransformerQuery):
             genes = {}
             for gene in query.genes:
                 gene_id = 'NCBIGene:'+entrez_gene_id(gene) if entrez_gene_id(gene) != None else gene.gene_id
+                gene.attributes.append(
+                    Attribute(
+                        name = 'gene-knockout correlation with '+gene_symbol(gene),
+                        value = '1.0',
+                        source = 'DepMap gene-knockout correlation'
+                        )
+                    )
                 genes[gene_id] = gene
             for gene in query.genes:
                 genes = expand_gene_knockout(gene, threshold, genes)
@@ -90,16 +100,12 @@ def add_correlation(genes:dict, correlation: dict, symbol: str):
             gene_id = gene_id,
             attributes = [
                 Attribute(
-                    name = 'entrez_gene_id',
-                    value = str(entrez_gene_id),
-                    source = 'DepMap gene-knockout correlation'
-                ),
-                Attribute(
                     name = 'gene-knockout correlation with '+symbol,
                     value = str(correlation['correlation']),
                     source = 'DepMap gene-knockout correlation'
                 )
-            ]
+            ],
+            identifiers = GeneInfoIdentifiers(entrez = gene_id)
         )
         genes[gene_id] = gene
     return genes
@@ -109,9 +115,11 @@ def entrez_gene_id(gene: GeneInfo):
     """
         Return value of the entrez_gene_id attribute
     """
-    for attr in gene.attributes:
-        if attr.name == 'entrez_gene_id':
-            return attr.value
+    if (gene.identifiers is not None and gene.identifiers.entrez is not None):
+        if (gene.identifiers.entrez.startswith('NCBIGene:')):
+            return gene.identifiers.entrez[9:]
+        else:
+            return gene.identifiers.entrez
     return None
 
 

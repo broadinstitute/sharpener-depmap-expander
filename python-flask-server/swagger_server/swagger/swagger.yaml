@@ -83,7 +83,7 @@ definitions:
     example:
       identifiers:
         mim: "MIM:608958"
-        entrez: "NCBIgene:100"
+        entrez: "NCBIGene:100"
         ensembl:
         - "ENSEMBL:ENSG00000196839"
         - "ENSEMBL:ENSG00000196839"
@@ -213,7 +213,7 @@ definitions:
     properties:
       entrez:
         type: "string"
-        example: "NCBIgene:100"
+        example: "NCBIGene:100"
         description: "Entrez gene id (CURIE)."
       hgnc:
         type: "string"
@@ -231,7 +231,7 @@ definitions:
           example: "ENSEMBL:ENSG00000196839"
     example:
       mim: "MIM:608958"
-      entrez: "NCBIgene:100"
+      entrez: "NCBIGene:100"
       ensembl:
       - "ENSEMBL:ENSG00000196839"
       - "ENSEMBL:ENSG00000196839"
