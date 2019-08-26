@@ -7,6 +7,7 @@ from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
 from swagger_server.models.attribute import Attribute  # noqa: F401,E501
+from swagger_server.models.gene_info_identifiers import GeneInfoIdentifiers  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -16,25 +17,30 @@ class GeneInfo(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, gene_id: str=None, attributes: List[Attribute]=None):  # noqa: E501
+    def __init__(self, gene_id: str=None, identifiers: GeneInfoIdentifiers=None, attributes: List[Attribute]=None):  # noqa: E501
         """GeneInfo - a model defined in Swagger
 
         :param gene_id: The gene_id of this GeneInfo.  # noqa: E501
         :type gene_id: str
+        :param identifiers: The identifiers of this GeneInfo.  # noqa: E501
+        :type identifiers: GeneInfoIdentifiers
         :param attributes: The attributes of this GeneInfo.  # noqa: E501
         :type attributes: List[Attribute]
         """
         self.swagger_types = {
             'gene_id': str,
+            'identifiers': GeneInfoIdentifiers,
             'attributes': List[Attribute]
         }
 
         self.attribute_map = {
             'gene_id': 'gene_id',
+            'identifiers': 'identifiers',
             'attributes': 'attributes'
         }
 
         self._gene_id = gene_id
+        self._identifiers = identifiers
         self._attributes = attributes
 
     @classmethod
@@ -52,6 +58,7 @@ class GeneInfo(Model):
     def gene_id(self) -> str:
         """Gets the gene_id of this GeneInfo.
 
+        Id of the gene.  # noqa: E501
 
         :return: The gene_id of this GeneInfo.
         :rtype: str
@@ -62,6 +69,7 @@ class GeneInfo(Model):
     def gene_id(self, gene_id: str):
         """Sets the gene_id of this GeneInfo.
 
+        Id of the gene.  # noqa: E501
 
         :param gene_id: The gene_id of this GeneInfo.
         :type gene_id: str
@@ -72,9 +80,31 @@ class GeneInfo(Model):
         self._gene_id = gene_id
 
     @property
+    def identifiers(self) -> GeneInfoIdentifiers:
+        """Gets the identifiers of this GeneInfo.
+
+
+        :return: The identifiers of this GeneInfo.
+        :rtype: GeneInfoIdentifiers
+        """
+        return self._identifiers
+
+    @identifiers.setter
+    def identifiers(self, identifiers: GeneInfoIdentifiers):
+        """Sets the identifiers of this GeneInfo.
+
+
+        :param identifiers: The identifiers of this GeneInfo.
+        :type identifiers: GeneInfoIdentifiers
+        """
+
+        self._identifiers = identifiers
+
+    @property
     def attributes(self) -> List[Attribute]:
         """Gets the attributes of this GeneInfo.
 
+        Additional information about the gene and provenance about gene-list menbership. Sharpener will use myGene.info to add the following attributes to every gene: 'gene_symbol',  'entrez_gene_id', 'HGNC', 'MIM', 'ensembl_gene_id', 'synonyms', 'gene_name',  and 'myGene.info id'. Multiple synonyms and ensembl_gene_id are separated by semicolons.  # noqa: E501
 
         :return: The attributes of this GeneInfo.
         :rtype: List[Attribute]
@@ -85,6 +115,7 @@ class GeneInfo(Model):
     def attributes(self, attributes: List[Attribute]):
         """Sets the attributes of this GeneInfo.
 
+        Additional information about the gene and provenance about gene-list menbership. Sharpener will use myGene.info to add the following attributes to every gene: 'gene_symbol',  'entrez_gene_id', 'HGNC', 'MIM', 'ensembl_gene_id', 'synonyms', 'gene_name',  and 'myGene.info id'. Multiple synonyms and ensembl_gene_id are separated by semicolons.  # noqa: E501
 
         :param attributes: The attributes of this GeneInfo.
         :type attributes: List[Attribute]

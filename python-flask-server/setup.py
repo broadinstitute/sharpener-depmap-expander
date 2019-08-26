@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 NAME = "sharpener-depmap-expander"
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 
 # To install the library, run the following
 #
@@ -18,10 +18,10 @@ REQUIRES = ["connexion"]
 setup(
     name=NAME,
     version=VERSION,
-    description="API for an expander based on DepMap gene-knockdown correlations",
+    description="DepMap correlation expander",
     author_email="",
     url="",
-    keywords=["Swagger", "API for an expander based on DepMap gene-knockdown correlations"],
+    keywords=["Swagger", "DepMap correlation expander"],
     install_requires=REQUIRES,
     packages=find_packages(),
     package_data={'': ['swagger/swagger.yaml']},
@@ -29,7 +29,7 @@ setup(
     entry_points={
         'console_scripts': ['swagger_server=swagger_server.__main__:main']},
     long_description="""\
-    Gene-list expander based on DepMap gene-knockdown correlations
+    Gene-list expander based on DepMap gene-knockdown correlations.
     """
 )
 
