@@ -15,7 +15,7 @@ class Parameter(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, name: str=None, type: str=None, default: str=None, allowed_values: List[str]=None):  # noqa: E501
+    def __init__(self, name: str=None, type: str=None, default: str=None, allowed_values: List[str]=None, suggested_values: str=None, lookup_url: str=None):  # noqa: E501
         """Parameter - a model defined in Swagger
 
         :param name: The name of this Parameter.  # noqa: E501
@@ -26,25 +26,35 @@ class Parameter(Model):
         :type default: str
         :param allowed_values: The allowed_values of this Parameter.  # noqa: E501
         :type allowed_values: List[str]
+        :param suggested_values: The suggested_values of this Parameter.  # noqa: E501
+        :type suggested_values: str
+        :param lookup_url: The lookup_url of this Parameter.  # noqa: E501
+        :type lookup_url: str
         """
         self.swagger_types = {
             'name': str,
             'type': str,
             'default': str,
-            'allowed_values': List[str]
+            'allowed_values': List[str],
+            'suggested_values': str,
+            'lookup_url': str
         }
 
         self.attribute_map = {
             'name': 'name',
             'type': 'type',
             'default': 'default',
-            'allowed_values': 'allowed_values'
+            'allowed_values': 'allowed_values',
+            'suggested_values': 'suggested_values',
+            'lookup_url': 'lookup_url'
         }
 
         self._name = name
         self._type = type
         self._default = default
         self._allowed_values = allowed_values
+        self._suggested_values = suggested_values
+        self._lookup_url = lookup_url
 
     @classmethod
     def from_dict(cls, dikt) -> 'Parameter':
@@ -158,3 +168,49 @@ class Parameter(Model):
         """
 
         self._allowed_values = allowed_values
+
+    @property
+    def suggested_values(self) -> str:
+        """Gets the suggested_values of this Parameter.
+
+        Suggested value range for the parameter.  # noqa: E501
+
+        :return: The suggested_values of this Parameter.
+        :rtype: str
+        """
+        return self._suggested_values
+
+    @suggested_values.setter
+    def suggested_values(self, suggested_values: str):
+        """Sets the suggested_values of this Parameter.
+
+        Suggested value range for the parameter.  # noqa: E501
+
+        :param suggested_values: The suggested_values of this Parameter.
+        :type suggested_values: str
+        """
+
+        self._suggested_values = suggested_values
+
+    @property
+    def lookup_url(self) -> str:
+        """Gets the lookup_url of this Parameter.
+
+        URL to search for suitable parameter values.  # noqa: E501
+
+        :return: The lookup_url of this Parameter.
+        :rtype: str
+        """
+        return self._lookup_url
+
+    @lookup_url.setter
+    def lookup_url(self, lookup_url: str):
+        """Sets the lookup_url of this Parameter.
+
+        URL to search for suitable parameter values.  # noqa: E501
+
+        :param lookup_url: The lookup_url of this Parameter.
+        :type lookup_url: str
+        """
+
+        self._lookup_url = lookup_url

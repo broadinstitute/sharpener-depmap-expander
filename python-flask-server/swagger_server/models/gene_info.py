@@ -104,7 +104,7 @@ class GeneInfo(Model):
     def attributes(self) -> List[Attribute]:
         """Gets the attributes of this GeneInfo.
 
-        Additional information about the gene and provenance about gene-list menbership. Sharpener will use myGene.info to add the following attributes to every gene: 'gene_symbol',  'entrez_gene_id', 'HGNC', 'MIM', 'ensembl_gene_id', 'synonyms', 'gene_name',  and 'myGene.info id'. Multiple synonyms and ensembl_gene_id are separated by semicolons.  # noqa: E501
+        Additional information about the gene and provenance about gene-list membership. Sharpener will use myGene.info to add 'gene_symbol', 'synonyms', and 'gene_name' to every gene.  Multiple synonyms are separated by semicolons.  # noqa: E501
 
         :return: The attributes of this GeneInfo.
         :rtype: List[Attribute]
@@ -115,7 +115,7 @@ class GeneInfo(Model):
     def attributes(self, attributes: List[Attribute]):
         """Sets the attributes of this GeneInfo.
 
-        Additional information about the gene and provenance about gene-list menbership. Sharpener will use myGene.info to add the following attributes to every gene: 'gene_symbol',  'entrez_gene_id', 'HGNC', 'MIM', 'ensembl_gene_id', 'synonyms', 'gene_name',  and 'myGene.info id'. Multiple synonyms and ensembl_gene_id are separated by semicolons.  # noqa: E501
+        Additional information about the gene and provenance about gene-list membership. Sharpener will use myGene.info to add 'gene_symbol', 'synonyms', and 'gene_name' to every gene.  Multiple synonyms are separated by semicolons.  # noqa: E501
 
         :param attributes: The attributes of this GeneInfo.
         :type attributes: List[Attribute]

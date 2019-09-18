@@ -2,10 +2,12 @@
 swagger: "2.0"
 info:
   description: "Gene-list expander based on DepMap gene-knockdown correlations."
-  version: "1.1.0"
+  version: "1.2.0"
   title: "DepMap correlation expander"
 host: "sharpener.ncats.io"
 basePath: "/depmap_expander"
+schemes:
+- "https"
 paths:
   /transformer_info:
     get:
@@ -74,20 +76,19 @@ definitions:
       attributes:
         type: "array"
         description: "Additional information about the gene and provenance about gene-list\
-          \ menbership. Sharpener will use myGene.info to add the following attributes\
-          \ to every gene: 'gene_symbol',  'entrez_gene_id', 'HGNC', 'MIM', 'ensembl_gene_id',\
-          \ 'synonyms', 'gene_name',  and 'myGene.info id'. Multiple synonyms and\
-          \ ensembl_gene_id are separated by semicolons."
+          \ membership. Sharpener will use myGene.info to add 'gene_symbol', 'synonyms',\
+          \ and 'gene_name' to every gene.  Multiple synonyms are separated by semicolons."
         items:
           $ref: "#/definitions/attribute"
     example:
       identifiers:
         mim: "MIM:608958"
-        entrez: "NCBIgene:100"
+        entrez: "NCBIGene:100"
         ensembl:
         - "ENSEMBL:ENSG00000196839"
         - "ENSEMBL:ENSG00000196839"
         hgnc: "HGNC:186"
+        mygene_info: "100"
       attributes:
       - name: "name"
         source: "source"
@@ -169,12 +170,16 @@ definitions:
         - "allowed_values"
         default: "default"
         name: "name"
+        suggested_values: "suggested_values"
+        lookup_url: "lookup_url"
         type: "Boolean"
       - allowed_values:
         - "allowed_values"
         - "allowed_values"
         default: "default"
         name: "name"
+        suggested_values: "suggested_values"
+        lookup_url: "lookup_url"
         type: "Boolean"
   parameter:
     type: "object"
@@ -202,18 +207,26 @@ definitions:
         description: "Allowed values for the parameter."
         items:
           type: "string"
+      suggested_values:
+        type: "string"
+        description: "Suggested value range for the parameter."
+      lookup_url:
+        type: "string"
+        description: "URL to search for suitable parameter values."
     example:
       allowed_values:
       - "allowed_values"
       - "allowed_values"
       default: "default"
       name: "name"
+      suggested_values: "suggested_values"
+      lookup_url: "lookup_url"
       type: "Boolean"
   gene_info_identifiers:
     properties:
       entrez:
         type: "string"
-        example: "NCBIgene:100"
+        example: "NCBIGene:100"
         description: "Entrez gene id (CURIE)."
       hgnc:
         type: "string"
@@ -229,10 +242,15 @@ definitions:
         items:
           type: "string"
           example: "ENSEMBL:ENSG00000196839"
+      mygene_info:
+        type: "string"
+        example: "100"
+        description: "myGene.info primary id."
     example:
       mim: "MIM:608958"
-      entrez: "NCBIgene:100"
+      entrez: "NCBIGene:100"
       ensembl:
       - "ENSEMBL:ENSG00000196839"
       - "ENSEMBL:ENSG00000196839"
       hgnc: "HGNC:186"
+      mygene_info: "100"
