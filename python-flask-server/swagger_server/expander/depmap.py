@@ -6,32 +6,25 @@ from swagger_server.models.gene_info import GeneInfo
 from swagger_server.models.gene_info import GeneInfoIdentifiers
 from swagger_server.models.attribute import Attribute
 
+import json
 import requests
 
+NAME = 'DepMap co-fitness correlation'
+THRESHOLD = 'correlation threshold'
+CORRELATED_VALUES = 'correlated values'
 
 def expander_info():
     """
         Return information for this expander
     """
-    return TransformerInfo(
-        name = 'DepMap correlation expander',
-        function = 'expander',
-        description = 'Gene-list expander based on DepMap gene-knockdown correlations.',
-        parameters = [
-            Parameter(
-                name = 'correlation threshold',
-                type = 'double',
-                default = '0.5'
-            ),
-            Parameter(
-                name = 'correlated values',
-                type = 'string',
-                default = 'gene knockout',
-                allowed_values = ['gene knockout']
-            )
-        ],
-        required_attributes = ['identifiers.entrez','gene_symbol']
-    )
+    global NAME, THRESHOLD, CORRELATED_VALUES
+
+    with open("transformer_info.json",'r') as f:
+        info = TransformerInfo.from_dict(json.loads(f.read()))
+        NAME = info.name
+        THRESHOLD = info.parameters[0].name
+        CORRELATED_VALUES = info.parameters[1].name
+        return info
 
 
 def expand(query: TransformerQuery):
@@ -40,8 +33,8 @@ def expand(query: TransformerQuery):
     """
     controls = {control.name:control.value for control in query.controls}
     try:
-        threshold = float(controls['correlation threshold'])
-        if controls['correlated values'] == 'gene knockout':
+        threshold = float(controls[THRESHOLD])
+        if controls[CORRELATED_VALUES] == 'gene knockout':
             genes = {}
             for gene in query.genes:
                 gene_id = 'NCBIGene:'+entrez_gene_id(gene) if entrez_gene_id(gene) != None else gene.gene_id
