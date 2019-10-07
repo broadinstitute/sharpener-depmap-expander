@@ -13,19 +13,21 @@ import requests
 
 NAME = 'DepMap co-fitness correlation'
 THRESHOLD = 'correlation threshold'
+DIRECTION = 'correlation direction'
 CORRELATED_VALUES = 'correlated values'
 
 def expander_info():
     """
         Return information for this expander
     """
-    global NAME, THRESHOLD, CORRELATED_VALUES
+    global NAME, THRESHOLD, DIRECTION, CORRELATED_VALUES
 
     with open("transformer_info.json",'r') as f:
         info = TransformerInfo.from_dict(json.loads(f.read()))
         NAME = info.name
         THRESHOLD = info.parameters[0].name
-        CORRELATED_VALUES = info.parameters[1].name
+        DIRECTION = info.parameters[1].name
+        CORRELATED_VALUES = info.parameters[2].name
         return info
 
 
@@ -35,6 +37,7 @@ def expand(query: TransformerQuery):
     """
     controls = {control.name:control.value for control in query.controls}
     try:
+        direction = controls[DIRECTION]
         threshold = float(controls[THRESHOLD])
         if controls[CORRELATED_VALUES] == 'gene knockout':
             gene_list = []
@@ -51,7 +54,7 @@ def expand(query: TransformerQuery):
                 gene_list.append(gene)
                 genes[gene_id] = gene
             for gene in query.genes:
-                expand_gene_knockout(gene, threshold, gene_list, genes)
+                expand_gene_knockout(gene, direction, threshold, gene_list, genes)
             return gene_list
         else:
             msg = "invalid correlated values: '"+controls['correlated values']+"'"
@@ -64,7 +67,7 @@ def expand(query: TransformerQuery):
 CORR_URL = 'https://indigo.ncats.io/gene_knockout_correlation/correlations/{}'
 
 
-def expand_gene_knockout(query_gene: GeneInfo, threshold: float, gene_list: List[GeneInfo], genes: dict):
+def expand_gene_knockout(query_gene: GeneInfo, direction: str, threshold: float, gene_list: List[GeneInfo], genes: dict):
     """
         Add genes with gene-knockout correlation to query gene above the threshold
     """
@@ -72,9 +75,22 @@ def expand_gene_knockout(query_gene: GeneInfo, threshold: float, gene_list: List
     if gene_id is not None:
         correlations = requests.get(CORR_URL.format(gene_id)).json()
         for correlation in correlations:
-            if correlation['correlation'] > threshold:
+            if above_threshold(direction, correlation['correlation'], threshold):
                 gene = get_gene(correlation['entrez_gene_id_2'], gene_list, genes)
                 add_correlation(gene, correlation, gene_symbol(query_gene))
+
+
+def above_threshold(direction: str, correlation_value: float, threshold: float):
+    """
+        Compare correlation values with a threshold
+    """
+    if direction == 'correlation':
+        return correlation_value > threshold
+    if direction == 'anti-correlation':
+        return correlation_value < threshold
+    if direction == 'both':
+        return abs(correlation_value) > abs(threshold)
+    return correlation_value > threshold
 
 
 def get_gene(entrez_gene_id: str, gene_list: List[GeneInfo], genes: dict):
@@ -93,9 +109,9 @@ def get_gene(entrez_gene_id: str, gene_list: List[GeneInfo], genes: dict):
     return gene
 
 
-def add_correlation(gene:GeneInfo, correlation: dict, symbol: str):
+def add_correlation(gene: GeneInfo, correlation: dict, symbol: str):
     """
-        Add correlation information to genes dictionary
+        Add correlation information to a GeneInfo
     """
     gene.attributes.append(
         Attribute(

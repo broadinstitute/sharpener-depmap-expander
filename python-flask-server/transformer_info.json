@@ -12,6 +12,18 @@
             "lookup_url": null
         },
         {
+            "default": "correlation",
+            "name": "correlation direction",
+            "type": "string",
+            "allowed_values": [
+                "correlation",
+                "anti-correlation",
+                "both"
+            ],
+            "suggested_values": null,
+            "lookup_url": null
+        },
+        {
             "default": "gene knockout",
             "name": "correlated values",
             "type": "string",
