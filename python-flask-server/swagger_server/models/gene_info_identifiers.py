@@ -15,7 +15,7 @@ class GeneInfoIdentifiers(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, entrez: str=None, hgnc: str=None, mim: str=None, ensembl: List[str]=None):  # noqa: E501
+    def __init__(self, entrez: str=None, hgnc: str=None, mim: str=None, ensembl: List[str]=None, mygene_info: str=None):  # noqa: E501
         """GeneInfoIdentifiers - a model defined in Swagger
 
         :param entrez: The entrez of this GeneInfoIdentifiers.  # noqa: E501
@@ -26,25 +26,30 @@ class GeneInfoIdentifiers(Model):
         :type mim: str
         :param ensembl: The ensembl of this GeneInfoIdentifiers.  # noqa: E501
         :type ensembl: List[str]
+        :param mygene_info: The mygene_info of this GeneInfoIdentifiers.  # noqa: E501
+        :type mygene_info: str
         """
         self.swagger_types = {
             'entrez': str,
             'hgnc': str,
             'mim': str,
-            'ensembl': List[str]
+            'ensembl': List[str],
+            'mygene_info': str
         }
 
         self.attribute_map = {
             'entrez': 'entrez',
             'hgnc': 'hgnc',
             'mim': 'mim',
-            'ensembl': 'ensembl'
+            'ensembl': 'ensembl',
+            'mygene_info': 'mygene_info'
         }
 
         self._entrez = entrez
         self._hgnc = hgnc
         self._mim = mim
         self._ensembl = ensembl
+        self._mygene_info = mygene_info
 
     @classmethod
     def from_dict(cls, dikt) -> 'GeneInfoIdentifiers':
@@ -148,3 +153,26 @@ class GeneInfoIdentifiers(Model):
         """
 
         self._ensembl = ensembl
+
+    @property
+    def mygene_info(self) -> str:
+        """Gets the mygene_info of this GeneInfoIdentifiers.
+
+        myGene.info primary id.  # noqa: E501
+
+        :return: The mygene_info of this GeneInfoIdentifiers.
+        :rtype: str
+        """
+        return self._mygene_info
+
+    @mygene_info.setter
+    def mygene_info(self, mygene_info: str):
+        """Sets the mygene_info of this GeneInfoIdentifiers.
+
+        myGene.info primary id.  # noqa: E501
+
+        :param mygene_info: The mygene_info of this GeneInfoIdentifiers.
+        :type mygene_info: str
+        """
+
+        self._mygene_info = mygene_info

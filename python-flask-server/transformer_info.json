@@ -1,0 +1,41 @@
+{
+    "name": "DepMap co-fitness correlation",
+    "function": "expander",
+    "description": "Gene-list expander based on gene-knockout co-fitness correlation across cancer cell lines (https://depmap.org/portal/).",
+    "parameters": [
+        {
+            "default": "0.333",
+            "name": "correlation threshold",
+            "type": "double",
+            "allowed_values": null,
+            "suggested_values": "from -1 to 1",
+            "lookup_url": null
+        },
+        {
+            "default": "correlation",
+            "name": "correlation direction",
+            "type": "string",
+            "allowed_values": [
+                "correlation",
+                "anti-correlation",
+                "both"
+            ],
+            "suggested_values": null,
+            "lookup_url": null
+        },
+        {
+            "default": "gene knockout",
+            "name": "correlated values",
+            "type": "string",
+            "allowed_values": [
+                "gene knockout"
+            ],
+            "suggested_values": null,
+            "lookup_url": null
+        }
+    ],
+    "required_attributes": [
+        "identifiers.entrez",
+        "gene_symbol"
+    ]
+}

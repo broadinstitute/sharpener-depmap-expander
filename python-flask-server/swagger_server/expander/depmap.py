@@ -6,32 +6,29 @@ from swagger_server.models.gene_info import GeneInfo
 from swagger_server.models.gene_info import GeneInfoIdentifiers
 from swagger_server.models.attribute import Attribute
 
+from typing import List
+
+import json
 import requests
 
+NAME = 'DepMap co-fitness correlation'
+THRESHOLD = 'correlation threshold'
+DIRECTION = 'correlation direction'
+CORRELATED_VALUES = 'correlated values'
 
 def expander_info():
     """
         Return information for this expander
     """
-    return TransformerInfo(
-        name = 'DepMap correlation expander',
-        function = 'expander',
-        description = 'Gene-list expander based on DepMap gene-knockdown correlations.',
-        parameters = [
-            Parameter(
-                name = 'correlation threshold',
-                type = 'double',
-                default = '0.5'
-            ),
-            Parameter(
-                name = 'correlated values',
-                type = 'string',
-                default = 'gene knockout',
-                allowed_values = ['gene knockout']
-            )
-        ],
-        required_attributes = ['identifiers.entrez','gene_symbol']
-    )
+    global NAME, THRESHOLD, DIRECTION, CORRELATED_VALUES
+
+    with open("transformer_info.json",'r') as f:
+        info = TransformerInfo.from_dict(json.loads(f.read()))
+        NAME = info.name
+        THRESHOLD = info.parameters[0].name
+        DIRECTION = info.parameters[1].name
+        CORRELATED_VALUES = info.parameters[2].name
+        return info
 
 
 def expand(query: TransformerQuery):
@@ -40,8 +37,10 @@ def expand(query: TransformerQuery):
     """
     controls = {control.name:control.value for control in query.controls}
     try:
-        threshold = float(controls['correlation threshold'])
-        if controls['correlated values'] == 'gene knockout':
+        direction = controls[DIRECTION]
+        threshold = float(controls[THRESHOLD])
+        if controls[CORRELATED_VALUES] == 'gene knockout':
+            gene_list = []
             genes = {}
             for gene in query.genes:
                 gene_id = 'NCBIGene:'+entrez_gene_id(gene) if entrez_gene_id(gene) != None else gene.gene_id
@@ -52,10 +51,11 @@ def expand(query: TransformerQuery):
                         source = 'DepMap gene-knockout correlation'
                         )
                     )
+                gene_list.append(gene)
                 genes[gene_id] = gene
             for gene in query.genes:
-                genes = expand_gene_knockout(gene, threshold, genes)
-            return list(genes.values())
+                expand_gene_knockout(gene, direction, threshold, gene_list, genes)
+            return gene_list
         else:
             msg = "invalid correlated values: '"+controls['correlated values']+"'"
             return ({ "status": 400, "title": "Bad Request", "detail": msg, "type": "about:blank" }, 400 )
@@ -67,48 +67,59 @@ def expand(query: TransformerQuery):
 CORR_URL = 'https://indigo.ncats.io/gene_knockout_correlation/correlations/{}'
 
 
-def expand_gene_knockout(gene: GeneInfo, threshold: float, genes: dict):
+def expand_gene_knockout(query_gene: GeneInfo, direction: str, threshold: float, gene_list: List[GeneInfo], genes: dict):
     """
         Add genes with gene-knockout correlation to query gene above the threshold
     """
-    gene_id = entrez_gene_id(gene)
-    if gene_id != None:
+    gene_id = entrez_gene_id(query_gene)
+    if gene_id is not None:
         correlations = requests.get(CORR_URL.format(gene_id)).json()
         for correlation in correlations:
-            if correlation['correlation'] > threshold:
-                genes = add_correlation(genes, correlation, gene_symbol(gene))
-    return genes
+            if above_threshold(direction, correlation['correlation'], threshold):
+                gene = get_gene(correlation['entrez_gene_id_2'], gene_list, genes)
+                add_correlation(gene, correlation, gene_symbol(query_gene))
 
 
-def add_correlation(genes:dict, correlation: dict, symbol: str):
+def above_threshold(direction: str, correlation_value: float, threshold: float):
     """
-        Add correlation information to genes dictionary
+        Compare correlation values with a threshold
     """
-    entrez_gene_id = correlation['entrez_gene_id_2']
+    if direction == 'correlation':
+        return correlation_value > threshold
+    if direction == 'anti-correlation':
+        return correlation_value < threshold
+    if direction == 'both':
+        return abs(correlation_value) > abs(threshold)
+    return correlation_value > threshold
+
+
+def get_gene(entrez_gene_id: str, gene_list: List[GeneInfo], genes: dict):
+    """
+        Find GeneInfo with a given entrez gene id or create a new GeneInfo
+    """
     gene_id = 'NCBIGene:'+str(entrez_gene_id)
     if gene_id in genes:
-        gene = genes[gene_id]
-        gene.attributes.append(
-            Attribute(
-                name = 'gene-knockout correlation with '+symbol,
-                value = str(correlation['correlation']),
-                source = 'DepMap gene-knockout correlation'
-            )
+        return genes[gene_id]
+    gene = GeneInfo(gene_id = gene_id,
+                    attributes = [],
+                    identifiers = GeneInfoIdentifiers(entrez = gene_id)
+                   )
+    gene_list.append(gene)
+    genes[gene_id] = gene
+    return gene
+
+
+def add_correlation(gene: GeneInfo, correlation: dict, symbol: str):
+    """
+        Add correlation information to a GeneInfo
+    """
+    gene.attributes.append(
+        Attribute(
+            name = 'gene-knockout correlation with '+symbol,
+            value = str(correlation['correlation']),
+            source = 'DepMap gene-knockout correlation'
         )
-    else:
-        gene = GeneInfo(
-            gene_id = gene_id,
-            attributes = [
-                Attribute(
-                    name = 'gene-knockout correlation with '+symbol,
-                    value = str(correlation['correlation']),
-                    source = 'DepMap gene-knockout correlation'
-                )
-            ],
-            identifiers = GeneInfoIdentifiers(entrez = gene_id)
-        )
-        genes[gene_id] = gene
-    return genes
+    )
 
 
 def entrez_gene_id(gene: GeneInfo):
