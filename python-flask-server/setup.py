@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 NAME = "sharpener-depmap-expander"
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 
 # To install the library, run the following
 #

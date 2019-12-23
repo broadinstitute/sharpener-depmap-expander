@@ -16,6 +16,24 @@ THRESHOLD = 'correlation threshold'
 DIRECTION = 'correlation direction'
 CORRELATED_VALUES = 'correlated values'
 
+CORR_URL = 'https://translator.broadinstitute.org/gene_knockout_correlation/correlations/'
+
+
+def configure():
+    """
+        Configure transformer
+    """
+    global CORR_URL
+
+    with open("config.json",'r') as f:
+        config = json.loads(f.read())
+        if 'correlation_url' in config:
+            CORR_URL = config['correlation_url']
+
+    # also configure transformer and parameter names
+    expander_info()
+
+
 def expander_info():
     """
         Return information for this expander
@@ -48,7 +66,7 @@ def expand(query: TransformerQuery):
                     Attribute(
                         name = 'gene-knockout correlation with '+gene_symbol(gene),
                         value = '1.0',
-                        source = 'DepMap gene-knockout correlation'
+                        source = NAME
                         )
                     )
                 gene_list.append(gene)
@@ -64,7 +82,7 @@ def expand(query: TransformerQuery):
         return ({ "status": 400, "title": "Bad Request", "detail": msg, "type": "about:blank" }, 400 )
 
 
-CORR_URL = 'https://indigo.ncats.io/gene_knockout_correlation/correlations/{}'
+
 
 
 def expand_gene_knockout(query_gene: GeneInfo, direction: str, threshold: float, gene_list: List[GeneInfo], genes: dict):
@@ -73,7 +91,7 @@ def expand_gene_knockout(query_gene: GeneInfo, direction: str, threshold: float,
     """
     gene_id = entrez_gene_id(query_gene)
     if gene_id is not None:
-        correlations = requests.get(CORR_URL.format(gene_id)).json()
+        correlations = requests.get(CORR_URL+gene_id).json()
         for correlation in correlations:
             if above_threshold(direction, correlation['correlation'], threshold):
                 gene = get_gene(correlation['entrez_gene_id_2'], gene_list, genes)
@@ -117,7 +135,7 @@ def add_correlation(gene: GeneInfo, correlation: dict, symbol: str):
         Attribute(
             name = 'gene-knockout correlation with '+symbol,
             value = str(correlation['correlation']),
-            source = 'DepMap gene-knockout correlation'
+            source = NAME
         )
     )
 
@@ -143,3 +161,6 @@ def gene_symbol(gene: GeneInfo):
             return attr.value
     return 'query gene'
 
+
+# configure transformer
+configure()
