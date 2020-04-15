@@ -15,6 +15,7 @@ NAME = 'DepMap co-fitness correlation'
 THRESHOLD = 'correlation threshold'
 DIRECTION = 'correlation direction'
 CORRELATED_VALUES = 'correlated values'
+LIMIT = 'maximum number'
 
 CORR_URL = 'https://translator.broadinstitute.org/gene_knockout_correlation/correlations/'
 
@@ -46,6 +47,7 @@ def expander_info():
         THRESHOLD = info.parameters[0].name
         DIRECTION = info.parameters[1].name
         CORRELATED_VALUES = info.parameters[2].name
+        LIMIT = info.parameters[3].name
         return info
 
 
@@ -57,6 +59,7 @@ def expand(query: TransformerQuery):
     try:
         direction = controls[DIRECTION]
         threshold = float(controls[THRESHOLD])
+        limit = int(controls[LIMIT]) if LIMIT in controls.keys() else 0
         if controls[CORRELATED_VALUES] == 'gene knockout':
             gene_list = []
             genes = {}
@@ -72,7 +75,7 @@ def expand(query: TransformerQuery):
                 gene_list.append(gene)
                 genes[gene_id] = gene
             for gene in query.genes:
-                expand_gene_knockout(gene, direction, threshold, gene_list, genes)
+                expand_gene_knockout(gene, direction, threshold, limit-1, gene_list, genes)
             return gene_list
         else:
             msg = "invalid correlated values: '"+controls['correlated values']+"'"
@@ -85,16 +88,21 @@ def expand(query: TransformerQuery):
 
 
 
-def expand_gene_knockout(query_gene: GeneInfo, direction: str, threshold: float, gene_list: List[GeneInfo], genes: dict):
+def expand_gene_knockout(query_gene: GeneInfo, direction: str, threshold: float, limit: int, gene_list: List[GeneInfo], genes: dict):
     """
         Add genes with gene-knockout correlation to query gene above the threshold
     """
     gene_id = entrez_gene_id(query_gene)
     if gene_id is not None:
-        correlations = requests.get(CORR_URL+gene_id).json()
-        for correlation in correlations:
+        correlations = []
+        for correlation in requests.get(CORR_URL+gene_id).json():
             if above_threshold(direction, correlation['correlation'], threshold):
-                gene = get_gene(correlation['entrez_gene_id_2'], gene_list, genes)
+                correlations.append((1-correlation['correlation'], correlation['entrez_gene_id_2'], correlation['correlation']))
+        correlations.sort()
+        if limit >= 0 and limit < len(correlations):
+            correlations = correlations[0:limit]
+        for correlation in correlations:
+                gene = get_gene(correlation[1], gene_list, genes)
                 add_correlation(gene, correlation, gene_symbol(query_gene))
 
 
@@ -134,7 +142,7 @@ def add_correlation(gene: GeneInfo, correlation: dict, symbol: str):
     gene.attributes.append(
         Attribute(
             name = 'gene-knockout correlation with '+symbol,
-            value = str(correlation['correlation']),
+            value = str(correlation[2]),
             source = NAME
         )
     )
