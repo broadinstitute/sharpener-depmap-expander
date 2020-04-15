@@ -59,7 +59,7 @@ def expand(query: TransformerQuery):
     try:
         direction = controls[DIRECTION]
         threshold = float(controls[THRESHOLD])
-        limit = int(controls[LIMIT])
+        limit = int(controls[LIMIT]) if LIMIT in controls.keys() else 0
         if controls[CORRELATED_VALUES] == 'gene knockout':
             gene_list = []
             genes = {}
